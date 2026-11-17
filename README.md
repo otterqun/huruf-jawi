@@ -48,26 +48,3 @@ Dibina menggunakan **100% fail statik** (HTML, CSS, Vanilla JavaScript ES6+ Modu
 
 ---
 
-## 💻 Cara Uji di Komputer (Local)
-
-Disebabkan projek ini menggunakan ES6 Modules (`type="module"`), buka melalui pelayan HTTP tempatan (bukan `file://`):
-
-```bash
-# Menggunakan Python
-python -m http.server 8080
-```
-
-Kemudian buka pelayar web ke: `http://localhost:8080`
-
----
-
-## 🚀 Cara Publish ke GitHub Pages (Menggunakan GitHub Desktop)
-
-1. Buka **GitHub Desktop**.
-2. Pilih **File → Add local repository...** dan pilih folder projek ini (`random-idea`).
-3. Jika belum ada repositori Git, klik **create a repository** (atau **Publish repository** terus ke akaun GitHub anda).
-4. Pastikan nama fail utama ialah `index.html`, `style.css`, `script.js`, dan `README.md`.
-5. Taip mesej *Commit* (contoh: `Initial release: Hikayat Jawi 3D`), klik **Commit to main**, kemudian klik **Push origin**.
-6. Buka repositori anda di laman web **GitHub.com** → klik **Settings** → **Pages**.
-7. Di bawah **Build and deployment → Source**, pilih **Deploy from a branch**, pilih branch `main` dan folder `/ (root)`, kemudian klik **Save**.
-8. Tunggu ~1–2 minit dan pautan permainan anda (`https://<username>.github.io/<repo-name>/`) sedia dimainkan!
