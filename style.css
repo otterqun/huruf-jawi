@@ -101,6 +101,7 @@ body {
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
   transition: transform 0.08s ease, filter 0.12s ease;
   touch-action: manipulation;
+  white-space: nowrap;
 }
 
 .story-btn:hover { filter: brightness(1.06); }
@@ -343,6 +344,11 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 4px;
+}
+
+.ch-bottom {
+  margin-top: auto;
+  padding-top: 4px;
 }
 
 .ch-icon { font-size: 1.5rem; }
@@ -823,13 +829,43 @@ body.mode-explore.touch-auto.is-touch-device .mobile-controls {
 }
 
 @media (max-width: 640px) {
+  .top-hud {
+    gap: 6px;
+  }
+
+  .hud-left,
+  .hud-right {
+    gap: 5px;
+    flex-shrink: 0;
+  }
+
+  .glass-pill-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 0.95rem;
+  }
+
+  .hud-chip {
+    padding: 4px 8px;
+    font-size: 0.78rem;
+  }
+
   #hudChapterChip {
     display: none;
   }
 
   .wayfinding-compass {
-    font-size: 0.78rem;
-    padding: 4px 10px;
+    font-size: 0.76rem;
+    padding: 4px 8px;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .compass-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .kitab-split {
@@ -838,6 +874,39 @@ body.mode-explore.touch-auto.is-touch-device .mobile-controls {
   }
 
   .kitab-detail {
-    max-height: 220px;
+    max-height: 44dvh;
+    padding: 10px;
+    gap: 6px;
+  }
+}
+
+/* Short Landscape Viewports (e.g. Mobile Landscape) */
+@media (max-height: 520px) {
+  .home-panel {
+    padding: 12px 14px;
+    gap: 10px;
+    max-height: 94dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .home-header {
+    gap: 6px;
+  }
+
+  .magic-pill {
+    display: none;
+  }
+
+  .main-title {
+    font-size: 1.35rem;
+  }
+
+  .main-sub {
+    font-size: 0.82rem;
+  }
+
+  .chapters-grid {
+    flex-shrink: 0;
   }
 }

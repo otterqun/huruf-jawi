@@ -517,8 +517,8 @@ function analyzeGlyphGeometry(char, expectedDotCount = 0, fallbackLetter = null)
         minDistSq[i] = dx * dx + dy * dy;
       }
 
-      // Farthest-Point Sampling until max gap <= 18px (up to 18 checkpoints) for full curve/arch coverage
-      const maxCheckpoints = 18;
+      // Farthest-Point Sampling for key structural points (start, end, corners/curves): 4-6 checkpoints
+      const maxCheckpoints = 6;
       while (picked.length < maxCheckpoints && picked.length < pool.length) {
         let farIdx = -1;
         let farDistSq = -1;
@@ -528,7 +528,7 @@ function analyzeGlyphGeometry(char, expectedDotCount = 0, fallbackLetter = null)
             farIdx = i;
           }
         }
-        if (farIdx === -1 || (picked.length >= 10 && farDistSq < 18 * 18)) break;
+        if (farIdx === -1 || (picked.length >= 4 && farDistSq < 42 * 42)) break;
 
         const nextPt = pool[farIdx];
         picked.push(nextPt);
