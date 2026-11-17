@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+  />
+  <meta name="theme-color" content="#0ea5e9" />
+  <meta
+    name="description"
+    content="Hikayat Jawi 3D: Pengembaraan Pustaka Ajaib — Permainan pengembaraan 3D orang ketiga untuk kanak-kanak belajar 37 huruf Jawi."
+  />
+  <title>Hikayat Jawi 3D: Pengembaraan Pustaka Ajaib</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>" />
+
+  <!-- Google Fonts: Fredoka (Storybook UI) + Noto Naskh Arabic & Amiri (Jawi Script) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Fredoka:wght@500;600;700&family=Noto+Naskh+Arabic:wght@500;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="mode-home touch-auto">
+  <!-- Full-Viewport 3D WebGL Canvas Container -->
+  <div id="webglContainer" class="webgl-container" aria-label="Dunia 3D Hikayat Jawi"></div>
+
+  <!-- =========================================================
+       FLOATING TOP HUD (Visible during 3D Exploration)
+       ========================================================= -->
+  <header id="topHud" class="top-hud hidden" aria-label="Maklumat Pengembaraan">
+    <div class="hud-left">
+      <button id="hudHomeBtn" class="glass-pill-btn btn-coral" type="button" aria-label="Menu Utama">
+        🏠
+      </button>
+      <span id="hudChapterChip" class="hud-chip">🏮 Bab 1: Kampung Cahaya</span>
+      <span id="hudProgressChip" class="hud-chip chip-gold">✨ 0/7</span>
+    </div>
+
+    <!-- Top-Center 3D Wayfinding Compass -->
+    <div id="wayfindingCompass" class="wayfinding-compass hidden" aria-label="Arah Huruf Seterusnya">
+      <span>🧭</span>
+      <span id="compassArrow" class="compass-arrow">⬆</span>
+      <span id="compassLabel" class="compass-label">Arah Huruf</span>
+    </div>
+
+    <div class="hud-right">
+      <button id="hudResetCamBtn" class="glass-pill-btn btn-soft" type="button" aria-label="Reset Kamera" title="Reset Kamera">
+        🎥
+      </button>
+      <button id="hudKitabBtn" class="glass-pill-btn btn-gold" type="button" aria-label="Kitab Jawi Saya">
+        📖
+      </button>
+      <button id="hudMuteBtn" class="glass-pill-btn btn-sky" type="button" aria-label="Bunyi">
+        🎵
+      </button>
+    </div>
+  </header>
+
+  <!-- Floating Nearby Interaction Prompt (Desktop Enter hint) -->
+  <div id="nearbyPrompt" class="nearby-prompt hidden" role="status">
+    Tekan <strong>Enter</strong> atau klik <strong>✨</strong> untuk menyalakan huruf <span id="nearbyGlyph" class="jawi-font">ا</span>!
+  </div>
+
+  <!-- =========================================================
+       STORYBOOK 3D HOMEPAGE OVERLAY
+       ========================================================= -->
+  <main id="homeScreen" class="overlay-backdrop home-screen">
+    <div class="home-panel glass-card">
+      <header class="home-header">
+        <div class="magic-pill">✨ Dunia 3D Pengembaraan Huruf ✨</div>
+        <h1 class="main-title">HIKAYAT JAWI 3D</h1>
+        <p class="main-sub">
+          Terokai kampung 3D, nyalakan tanglung ajaib, surih &amp; kuasai <strong>37 Huruf Jawi</strong>!
+        </p>
+
+        <div class="home-tools">
+          <button id="continueAdventureBtn" class="story-btn btn-emerald btn-primary-cta" type="button">
+            ▶ SAMBUNG BAB 1
+          </button>
+          <button id="openKitabHomeBtn" class="story-btn btn-gold" type="button">
+            📖 KITAB JAWI SAYA <span id="homeKitabCount">(0/37)</span>
+          </button>
+          <button id="homeMuteBtn" class="story-btn btn-soft" type="button">
+            🎵 BUNYI: ON
+          </button>
+          <button id="homeTouchBtn" class="story-btn btn-soft" type="button">
+            🎮 KAWALAN SENTUH: AUTO
+          </button>
+        </div>
+      </header>
+
+      <!-- 5 Selectable 3D World Themes / Chapters -->
+      <section id="chaptersGrid" class="chapters-grid" aria-label="Pilihan Bab 3D">
+        <article class="chapter-card c1" data-chapter="1">
+          <div class="ch-top">
+            <span class="ch-icon">🏮</span>
+            <span class="ch-done-badge hidden">✓ SELESAI</span>
+            <span id="ch1Stars" class="ch-stars">☆☆☆</span>
+          </div>
+          <h2 class="ch-name">Bab 1: Kampung Cahaya</h2>
+          <p class="ch-desc">Nyalakan 7 tanglung kampung bersama Tok Aki.</p>
+          <div id="ch1Letters" class="ch-jawi jawi-font" dir="rtl">ا ب ت ث ج ح خ</div>
+          <div class="ch-bottom">
+            <span id="ch1Count" class="ch-count">0/7</span>
+            <button class="story-btn btn-emerald play-ch-btn" data-chapter="1" type="button">TEROKA ▶</button>
+          </div>
+        </article>
+
+        <article class="chapter-card c2" data-chapter="2">
+          <div class="ch-top">
+            <span class="ch-icon">🌊</span>
+            <span class="ch-done-badge hidden">✓ SELESAI</span>
+            <span id="ch2Stars" class="ch-stars">☆☆☆</span>
+          </div>
+          <h2 class="ch-name">Bab 2: Sungai Mutiara</h2>
+          <p class="ch-desc">Aktifkan 8 batu mutiara sungai untuk Si Kancil.</p>
+          <div id="ch2Letters" class="ch-jawi jawi-font" dir="rtl">د ذ ر ز س ش ص ض</div>
+          <div class="ch-bottom">
+            <span id="ch2Count" class="ch-count">0/8</span>
+            <button class="story-btn btn-sky play-ch-btn" data-chapter="2" type="button">TEROKA ▶</button>
+          </div>
+        </article>
+
+        <article class="chapter-card c3" data-chapter="3">
+          <div class="ch-top">
+            <span class="ch-icon">🏺</span>
+            <span class="ch-done-badge hidden">✓ SELESAI</span>
+            <span id="ch3Stars" class="ch-stars">☆☆☆</span>
+          </div>
+          <h2 class="ch-name">Bab 3: Pasar Rempah</h2>
+          <p class="ch-desc">Labelkan 7 gerai rempah Mak Cik Siti.</p>
+          <div id="ch3Letters" class="ch-jawi jawi-font" dir="rtl">ط ظ ع غ ف ق ک</div>
+          <div class="ch-bottom">
+            <span id="ch3Count" class="ch-count">0/7</span>
+            <button class="story-btn btn-amber play-ch-btn" data-chapter="3" type="button">TEROKA ▶</button>
+          </div>
+        </article>
+
+        <article class="chapter-card c4" data-chapter="4">
+          <div class="ch-top">
+            <span class="ch-icon">🌸</span>
+            <span class="ch-done-badge hidden">✓ SELESAI</span>
+            <span id="ch4Stars" class="ch-stars">☆☆☆</span>
+          </div>
+          <h2 class="ch-name">Bab 4: Taman Burung</h2>
+          <p class="ch-desc">Bangunkan 9 rumah burung di taman bunga.</p>
+          <div id="ch4Letters" class="ch-jawi jawi-font" dir="rtl">ل م ن و ه ة ء ي ى</div>
+          <div class="ch-bottom">
+            <span id="ch4Count" class="ch-count">0/9</span>
+            <button class="story-btn btn-emerald play-ch-btn" data-chapter="4" type="button">TEROKA ▶</button>
+          </div>
+        </article>
+
+        <article class="chapter-card c5" data-chapter="5">
+          <div class="ch-top">
+            <span class="ch-icon">👑</span>
+            <span class="ch-done-badge hidden">✓ SELESAI</span>
+            <span id="ch5Stars" class="ch-stars">☆☆☆</span>
+          </div>
+          <h2 class="ch-name">Bab 5: Istana Bahasa Melayu</h2>
+          <p class="ch-desc">6 Huruf Jawi Melayu di halaman diraja!</p>
+          <div id="ch5Letters" class="ch-jawi jawi-font" dir="rtl">چ ڠ ڤ ݢ ۏ ڽ</div>
+          <div class="ch-bottom">
+            <span id="ch5Count" class="ch-count">0/6</span>
+            <button class="story-btn btn-purple play-ch-btn" data-chapter="5" type="button">TEROKA ▶</button>
+          </div>
+        </article>
+      </section>
+
+      <footer class="home-footer">
+        Kawalan PC: <strong>WASD / Anak Panah</strong> gerak • <strong>Seret Tetikus / Q E</strong> pusing kamera 360° • <strong>Space</strong> lompat • <strong>Enter</strong> interaksi
+      </footer>
+    </div>
+  </main>
+
+  <!-- =========================================================
+       LEARNING ACTIVITY DRAWER (Bottom Sheet Portrait / Right 50% Landscape)
+       ========================================================= -->
+  <section
+    id="activityDrawer"
+    class="activity-drawer hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="drawerTitle"
+  >
+    <div class="drawer-card glass-card">
+      <div class="drawer-header">
+        <div class="drawer-title-wrap">
+          <span id="drawerGlyphBadge" class="drawer-glyph jawi-font" dir="rtl">ا</span>
+          <div>
+            <h2 id="drawerTitle" class="drawer-title">ا — ALIF (a)</h2>
+            <p id="drawerNpcLine" class="drawer-sub">🏮 Tok Aki: "Jom surih &amp; pilih huruf ini!"</p>
+          </div>
+        </div>
+        <div class="drawer-actions">
+          <button id="drawerSpeakBtn" class="glass-pill-btn btn-gold" type="button" aria-label="Dengar Semula">
+            🔊
+          </button>
+          <button id="drawerCloseBtn" class="glass-pill-btn btn-coral" type="button" aria-label="Tutup">
+            ✖
+          </button>
+        </div>
+      </div>
+
+      <!-- Activity A: Surih Huruf (2D Canvas Tracing Pad) -->
+      <div id="activityTracePane" class="drawer-pane">
+        <div class="pane-top-row">
+          <span id="tracePrompt" class="pane-label">✏️ Langkah 1: Surih huruf di bawah!</span>
+          <button id="traceResetBtn" class="story-btn btn-soft btn-xs" type="button">🧹 Padam</button>
+        </div>
+        <div class="trace-pad-box">
+          <canvas id="traceCanvas" aria-label="Pad Surihan Huruf Jawi"></canvas>
+          <div id="traceDoneChip" class="trace-done-chip hidden">✨ Cantik tulisan kamu!</div>
+        </div>
+        <button id="toChoiceBtn" class="story-btn btn-purple btn-full hidden" type="button">
+          🎯 Teruskan ke Misi Pilih Huruf ➡
+        </button>
+      </div>
+
+      <!-- Activity B: Misi Pilih Huruf (Story Choice) -->
+      <div id="activityChoicePane" class="drawer-pane hidden">
+        <p id="choicePrompt" class="choice-prompt">
+          Pilih huruf <strong>ا (Alif)</strong> yang betul untuk menyalakan tanglung!
+        </p>
+        <div id="choiceGrid" class="choice-grid" dir="rtl"></div>
+        <div id="choiceFeedback" class="choice-feedback hidden" role="status" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       KITAB JAWI SAYA (37-LETTER REFERENCE BOOK)
+       ========================================================= -->
+  <section
+    id="kitabModal"
+    class="overlay-backdrop hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="kitabHeading"
+  >
+    <div class="kitab-card glass-card">
+      <div class="kitab-head">
+        <div>
+          <h2 id="kitabHeading" class="drawer-title">📖 KITAB JAWI SAYA (37 HURUF)</h2>
+          <p class="drawer-sub">Ketuk mana-mana huruf untuk dengar sebutan &amp; lihat contoh perkataan.</p>
+        </div>
+        <button id="closeKitabBtn" class="story-btn btn-coral btn-sm" type="button">✖ TUTUP</button>
+      </div>
+      <div class="kitab-split">
+        <div id="kitabGrid" class="kitab-grid" dir="rtl"></div>
+        <aside id="kitabDetail" class="kitab-detail" aria-live="polite">
+          <p class="kitab-placeholder">Pilih mana-mana huruf di sebelah untuk mendengar sebutan dan melihat bentuk sambungannya.</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       CHAPTER CELEBRATION MODAL
+       ========================================================= -->
+  <section
+    id="celebrateModal"
+    class="overlay-backdrop hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="celebrateTitle"
+  >
+    <div class="celebrate-card glass-card">
+      <div class="celebrate-icons">🎆👑📖👑🎆</div>
+      <h2 id="celebrateTitle" class="main-title" style="font-size:1.6rem;">TAHNIAH! BAB SELESAI!</h2>
+      <div class="celebrate-stars">⭐⭐⭐</div>
+      <p id="celebrateMsg" class="drawer-sub">Semua tanglung ajaib di kampung ini telah bercahaya!</p>
+      <div class="celebrate-btns">
+        <button id="nextChapterBtn" class="story-btn btn-emerald btn-full" type="button">➡ BAB SETERUSNYA</button>
+        <button id="celebrateKitabBtn" class="story-btn btn-gold btn-full" type="button">📖 BUKA KITAB JAWI SAYA</button>
+        <button id="celebrateHomeBtn" class="story-btn btn-coral btn-full" type="button">🏠 MENU UTAMA</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       MOBILE VIRTUAL ANALOG JOYSTICK + ACTION BUTTONS
+       ========================================================= -->
+  <div id="mobileControls" class="mobile-controls" aria-label="Kawalan Mudah Alih">
+    <div id="joystickZone" class="joystick-zone" aria-label="Kayu Ria Maya">
+      <div class="joystick-base">
+        <div id="joystickKnob" class="joystick-knob"></div>
+      </div>
+    </div>
+
+    <div class="action-buttons-zone">
+      <button id="btnInteract" class="mobile-action-btn btn-interact" type="button" aria-label="Interaksi">
+        <span>✨</span>
+        <small>BUKA</small>
+      </button>
+      <button id="btnJump" class="mobile-action-btn btn-jump" type="button" aria-label="Lompat">
+        <span>⬆️</span>
+        <small>LOMPAT</small>
+      </button>
+    </div>
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
